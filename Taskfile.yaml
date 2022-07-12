@@ -1,0 +1,25 @@
+# https://taskfile.dev
+
+version: '3'
+
+silent: true
+
+vars:
+  IMAGE_TAG: ikoniss/t-cubed
+
+tasks:
+  default:
+    cmds:
+      - task --list
+
+  build:
+    desc: builds the image
+    cmds:
+      - echo building docker image...
+      - docker build . -t {{.IMAGE_TAG}}:latest
+
+  publish:
+    desc: publishes the image to Docker Hub
+    cmds:
+      - echo publishing docker image...
+      - docker push {{.IMAGE_TAG}}:latest
