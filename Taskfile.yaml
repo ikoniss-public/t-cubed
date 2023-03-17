@@ -4,8 +4,8 @@ version: '3'
 
 silent: true
 
-vars:
-  IMAGE_TAG: ikoniss/t-cubed
+vars:  
+  IMAGE_TAG: adatoo/t-cubed
 
 tasks:
   default:
