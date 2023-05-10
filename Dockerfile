@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -22,6 +22,14 @@ RUN mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 RUN wget https://github.com/go-task/task/releases/download/v${TK_VER}/task_linux_amd64.tar.gz
 RUN tar xvzf task_linux_amd64.tar.gz
 RUN mv task /usr/local/bin/
+
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - 
+RUN apt install -y nodejs
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt update
+RUN apt install -y yarn
 
 RUN rm -rf *
 
