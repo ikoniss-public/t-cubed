@@ -1,25 +1,56 @@
 # https://taskfile.dev
 
-version: '3'
+version: "3"
 
 silent: true
 
-vars:  
-  IMAGE_TAG: adatoo/t-cubed
+vars:
+  PRODUCT: T-Cubed Build Container
+  IMAGE_NAME: adatoo/t-cubed
+  GIT_BRANCH:
+    sh: git branch --show-current
+  GIT_COMMIT:
+    sh: git describe --match="" --always --abbrev=10 --dirty
+  GIT_TAG:
+    sh: git describe --tags --abbrev=0
+  GIT_STATUS:
+    sh: git status --porcelain | grep -q . && echo **DIRTY** || echo clean
+  BUILD_DATE:
+    sh: echo {{now | date "2006-01-02 15:04:05 -0700"}}
 
 tasks:
   default:
     cmds:
+      - task info
       - task --list
+
+  info:
+    desc: displays product metadata
+    cmds:
+      - echo "============================================================================="
+      - echo "PRODUCT NAME       :" {{.PRODUCT}}
+      - echo "IMAGE NAME         :" {{.IMAGE_NAME}}
+      - echo "GIT BRANCH         :" {{.GIT_BRANCH}}
+      - echo "GIT COMMIT ID      :" {{.GIT_COMMIT}}
+      - echo "GIT TAG            :" {{.GIT_TAG}}
+      - echo "GIT STATUS         :" {{.GIT_STATUS}}
+      - echo "BUILD DATE         :" {{.BUILD_DATE}}
+      - echo "============================================================================="
+
+  check-dirty:
+    internal: true
+    cmds:
+      - '{{if eq .GIT_STATUS "clean"}}exit{{else}}echo repository is dirty!; exit 1{{end}}'
 
   build:
     desc: builds the image
     cmds:
       - echo building docker image...
-      - docker build . -t {{.IMAGE_TAG}}:latest
+      - task: check-dirty
+      - docker build . -t {{.IMAGE_NAME}}:latest -t {{.IMAGE_NAME}}:{{.GIT_COMMIT}} -t {{.IMAGE_NAME}}:{{.GIT_TAG}}
 
   publish:
     desc: publishes the image to Docker Hub
     cmds:
       - echo publishing docker image...
-      - docker push {{.IMAGE_TAG}}:latest
+      - docker push --all-tags {{.IMAGE_NAME}}
