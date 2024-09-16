@@ -26,8 +26,11 @@ RUN useradd -m -s /bin/zsh linuxbrew && \
 USER linuxbrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
-RUN brew install awscli terraform terragrunt go-task node yarn
+
+RUN brew install awscli tfenv terragrunt go-task node yarn
 RUN brew tap snyk/tap && brew install snyk
+RUN tfenv install latest
+RUN tfenv use latest
 
 USER root
 RUN yarn set version stable
