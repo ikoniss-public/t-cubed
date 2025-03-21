@@ -1,36 +1,49 @@
-FROM ubuntu:22.04
+FROM alpine:3
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && \
-    apt-get install -y -q --allow-unauthenticated \
-    build-essential \
-    software-properties-common \
-    python3 python3-pip \
-    docker.io \
-    docker-buildx \
+RUN apk add --no-cache \
+    bash \
     curl \
     wget \
+    zip \
+    unzip \
     jq \
     git \
     git-lfs \
     make \
+    docker \
+    cargo \
+    python3 \
+    python3-dev \
+    py3-pip \
+    pipx \
+    cmake \
+    openblas \
+    openblas-dev \
+    build-base \
+    file \
     sudo \
-    zip unzip
- 
-RUN useradd -m -s /bin/zsh linuxbrew && \
-    usermod -aG sudo linuxbrew &&  \
-    mkdir -p /home/linuxbrew/.linuxbrew && \
-    chown -R linuxbrew: /home/linuxbrew/.linuxbrew
+    nodejs \
+    yarn \
+    go-task \
+    aws-cli \
+    libstdc++
 
-USER linuxbrew
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
+ENV TF_VER=1.6.6
+ENV TG_VER=0.76.5
 
-RUN brew install awscli tfenv terragrunt go-task node yarn
-RUN brew tap snyk/tap && brew install snyk
-RUN tfenv install latest
-RUN tfenv use latest
+RUN wget https://releases.hashicorp.com/terraform/${TF_VER}/terraform_${TF_VER}_linux_amd64.zip
+RUN unzip terraform_${TF_VER}_linux_amd64.zip
+RUN mv terraform /usr/local/bin/
 
-USER root
+RUN wget https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VER}/terragrunt_linux_amd64
+RUN chmod +x ./terragrunt_linux_amd64
+RUN mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+RUN wget https://downloads.snyk.io/cli/stable/snyk-alpine
+RUN chmod +x ./snyk-alpine
+RUN mv snyk-alpine /usr/local/bin/snyk
+
+RUN pipx install poetry
+RUN ln -s /root/.local/bin/poetry /usr/local/bin/poetry
 RUN yarn set version stable
+RUN ln -s /usr/bin/go-task /usr/local/bin/task

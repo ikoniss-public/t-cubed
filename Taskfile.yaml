@@ -47,7 +47,7 @@ tasks:
     cmds:
       - echo building docker image...
       - task: check-dirty
-      - docker build . -t {{.IMAGE_NAME}}:latest -t {{.IMAGE_NAME}}:{{.GIT_COMMIT}} -t {{.IMAGE_NAME}}:{{.GIT_TAG}}
+      - docker buildx build --platform linux/amd64 . -t {{.IMAGE_NAME}}:latest -t {{.IMAGE_NAME}}:{{.GIT_COMMIT}} -t {{.IMAGE_NAME}}:{{.GIT_TAG}}
 
   publish:
     desc: publishes the image to Docker Hub
