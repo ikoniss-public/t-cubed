@@ -31,6 +31,9 @@ RUN apk add --no-cache \
 ENV TF_VER=1.6.6
 ENV TG_VER=0.76.5
 
+RUN echo '@community https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+RUN apk add --no-cache opentofu@community
+
 RUN wget https://releases.hashicorp.com/terraform/${TF_VER}/terraform_${TF_VER}_linux_amd64.zip
 RUN unzip terraform_${TF_VER}_linux_amd64.zip
 RUN mv terraform /usr/local/bin/
