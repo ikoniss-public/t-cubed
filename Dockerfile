@@ -12,6 +12,7 @@ RUN apk add --no-cache \
     make \
     docker \
     cargo \
+    uv \
     python3 \
     python3-dev \
     py3-pip \
